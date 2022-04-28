@@ -4,6 +4,8 @@ import {
   useHMSStore,
   selectLocalPeer,
   selectPeers,
+  useHMSActions,
+  selectHMSMessages,
 } from "@100mslive/react-sdk";
 import VideoTile from "./VideoTile";
 import VideoSpaces from "./VideoSpaces";
@@ -13,6 +15,16 @@ function Room() {
   const stage = localPeer.roleName === "stage";
   const viewer = localPeer.roleName === "viewer";
   const peers = useHMSStore(selectPeers);
+  const hmsActions = useHMSActions();
+  const allMessages = useHMSStore(selectHMSMessages); // get all messages
+  const [inputValues, setInputValues] = React.useState("");
+  const handleInputChange = (e) => {
+    setInputValues(e.target.value);
+  };
+  const sendMessage = () => {
+    hmsActions.sendBroadcastMessage(inputValues);
+    setInputValues("");
+  };
 
   return (
     <div className=" relative h-screen flex justify-center items-center px-12 bg-slate-800 flex-row gap-8 overflow-hidden">
@@ -84,6 +96,40 @@ function Room() {
               );
             })}
       </div>
+      <div className=" relative h-full w-full pb-20">
+        {/* Chat interface */}
+        <div className=" relative w-full h-full bg-slate-700 overflow-y-scroll">
+          {allMessages.map((msg) => (
+            <div
+              className="flex flex-col gap-2 bg-slate-900 m-3 py-2 px-2 rounded-md"
+              key={msg.id}
+            >
+              <span className="text-white text-2xl font-thin opacity-75">
+                {msg.senderName}
+                {console.log(msg.time)}
+              </span>
+              <span className="text-white text-xl">{msg.message}</span>
+            </div>
+          ))}
+        </div>
+        <div className=" absolute w-full rounded-2xl bottom-0 bg-slate-900 py-3 px-5 flex flex-row gap-4">
+          <input
+            type="text"
+            placeholder="Write a Message"
+            value={inputValues}
+            onChange={handleInputChange}
+            required
+            className=" focus:outline-none flex-1 px-2 py-3 rounded-md text-white bg-slate-900"
+          />
+          <button
+            className=" btn flex-1 text-white bg-blue-600 py-3 px-10 rounded-md"
+            onClick={sendMessage}
+          >
+            Send
+          </button>
+        </div>
+      </div>
+      ;
     </div>
   );
 }

@@ -9,6 +9,7 @@ import {
 } from "@100mslive/react-sdk";
 import VideoTile from "./VideoTile";
 import VideoSpaces from "./VideoSpaces";
+import ScreenShare from "./ScreenShare";
 
 function Room() {
   const localPeer = useHMSStore(selectLocalPeer);
@@ -129,7 +130,21 @@ function Room() {
           </button>
         </div>
       </div>
-      ;
+      <div className=" h-3/5 w-full rounded-2xl">
+        {/* Share screen */}
+        {stage
+          ? null
+          : peers &&
+            peers
+              .filter((peer) => !peer.isLocal)
+              .map((peer) => {
+                return (
+                  <>
+                    <ScreenShare isLocal={false} peer={peer} />
+                  </>
+                );
+              })}
+      </div>
     </div>
   );
 }

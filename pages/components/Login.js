@@ -47,6 +47,12 @@ function Login() {
     });
   };
 
+  useEffect(() => {
+    window.onunload = () => {
+     hmsActions.leave();
+    };
+   }, [hmsActions]);
+
   return (
     <>
       {!isConnected ? (
